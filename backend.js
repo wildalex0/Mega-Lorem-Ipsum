@@ -219,12 +219,14 @@ app.get('/api/records', (req,res) => {
 });
 
 app.post('/api/records', (req, res) => {
+    //Adds a new record
     const newRecord = req.body;
     data.push(newRecord);
     res.status(201).json(newRecord);
 });
 
 app.put('/api/records:id', (req,res) => {
+    //Updates a new record using the id as a param
     const id = req.params.id;
     const updatedRecord = req.body;
     data = data.map(record => (record.id === id ? updatedRecord : record));
@@ -232,6 +234,7 @@ app.put('/api/records:id', (req,res) => {
 });
 
 app.delete('/api/records:id', (req,res) => {
+    //Deletes an already existing record using the id as a param
     const id = req.params.id;
     data = data.filter(record => record.id !== id);
     res.status(204).end();
