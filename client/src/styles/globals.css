@@ -16,18 +16,7 @@
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+.hoverField:hover { 
+  background-color: rgb(241 245 249);
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-}
