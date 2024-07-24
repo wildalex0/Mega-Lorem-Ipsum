@@ -229,8 +229,9 @@ app.put('/api/records:id', (req,res) => {
     //Updates a new record using the id as a param
     const id = req.params.id;
     const updatedRecord = req.body;
-    data = data.map(record => (record.id === id ? updatedRecord : record));
+    data.push(updatedRecord);
     res.json(updatedRecord);
+    console.log(updatedRecord);
 });
 
 app.delete('/api/records:id', (req,res) => {

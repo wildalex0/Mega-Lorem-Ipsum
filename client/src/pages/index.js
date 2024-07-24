@@ -1,18 +1,21 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
-
+import Popup from './popup';
 export default function Home() {
 const [records, setRecords] = useState([]);
 const [showPopup, setShowPopup] = useState(false);
 const [currentRecord, setCurrentRecord] = useState(null);
-
+const [highestId, setHighestId] = useState(-1);
 useEffect(() => {
   fetchRecords();
 }, []);
 
 const fetchRecords = async () => {
   const response = await axios.get('http://localhost:5000/api/records');
-  setRecords(response.data);
+  const dt = response.data
+  setRecords(dt);
+  setHighestId(Number((dt[dt.length-1]).id));
+
 };
 
 const handleAdd = () => {
@@ -27,17 +30,17 @@ const handleEdit = record => {
 
 const handleDelete = async id => {
   if (window.confirm('Are you sure you want to delete this record?')){
-    await axios.delete(`http://localhost:5000/api/records?${id}`)
+    await axios.delete(`http://localhost:5000/api/records:${id}`)
     fetchRecords();
   }
 };
 
 const handleSave = async record => {
   if(record.id){
-    await axios.put(`http://localhost:5000/api/records?${record.id}`, record)
+    await axios.put(`http://localhost:5000/api/records:${record.id}`, record);
   } else { 
-    await axios.post(`http://localhost:5000/api/records?${record.id}`, record)
-  }
+    await axios.post(`http://localhost:5000/api/records:${record.id}`, record);
+  };
   fetchRecords();
   setShowPopup(false);
 };
@@ -46,11 +49,11 @@ const handleSave = async record => {
     <main className="flex flex-col min-h-screen">
   <p className="md:text-3xl text-lg font-semibold mx-5 mt-5">Mega Lorem Ipsum</p>
   <p className="md:text-xl text-base font-light mx-5 mb-6">Alessandro Gatt</p>
+  
   <div className='my-2 flex justify-center font-semibold'>
-  <button className="md:m-4 m-1 p-2 md:p4 md:w-1/5 w-1/4 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  ">Add</button>
-  <button className="md:m-4 m-1 p-2 md:p4 md:w-1/5 w-1/4 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  ">Edit</button>
-  <button className="md:m-4 m-1 p-2 md:p4 md:w-1/5 w-1/4 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  ">Delete</button>
-  <button className="md:m-4 m-1 p-2 md:p4 md:w-1/5 w-1/4 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  ">Save</button>
+  <button className="md:m-4 m-1 md:p-2 p-1 md:p4 md:w-1/4 w-1/3 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  " onClick={() =>handleAdd()} >Add</button>
+  <button className="md:m-4 m-1 md:p-2 p-1 md:p4 md:w-1/4 w-1/3 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  " onClick={() => handleEdit(currentRecord)}>Edit</button>
+  <button className="md:m-4 m-1 md:p-2 p-1 md:p4 md:w-1/4 w-1/3 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  " onClick={() =>handleDelete(currentRecord.id)}>Delete</button>
 
   </div>
   <div className="flex justify-center ">
@@ -77,8 +80,14 @@ const handleSave = async record => {
       </tbody>
     </table>
   </div>
-  {
-  }
+  {showPopup && (
+    <Popup
+      record={currentRecord}
+      onClose={() => setShowPopup(false)}
+      onSave={handleSave}
+      lastUsedId={highestId}
+    ></Popup>
+  )}
 
 </main>
 
