@@ -4,7 +4,7 @@ import axios from 'axios';
 export default function Home() {
 const [records, setRecords] = useState([]);
 const [showPopup, setShowPopup] = useState(false);
-const [currentRecords, setCurrentRecord] = useState(null);
+const [currentRecord, setCurrentRecord] = useState(null);
 
 useEffect(() => {
   fetchRecords();
@@ -15,7 +15,7 @@ const fetchRecords = async () => {
   setRecords(response.data);
 };
 
-const hadleAdd = () => {
+const handleAdd = () => {
   setCurrentRecord(null);
   setShowPopup(true);
 };
@@ -45,32 +45,40 @@ const handleSave = async record => {
   return (
     <main className="flex flex-col min-h-screen">
   <p className="md:text-3xl text-lg font-semibold mx-5 mt-5">Mega Lorem Ipsum</p>
-  <p className="md:text-xl text-base font-light mx-5 mb-4">Alessandro Gatt</p>
-  <button onClick={() => console.log(interaction)}>check</button>
+  <p className="md:text-xl text-base font-light mx-5 mb-6">Alessandro Gatt</p>
+  <div className='my-2 flex justify-center font-semibold'>
+  <button className="md:m-4 m-1 p-2 md:p4 md:w-1/5 w-1/4 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  ">Add</button>
+  <button className="md:m-4 m-1 p-2 md:p4 md:w-1/5 w-1/4 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  ">Edit</button>
+  <button className="md:m-4 m-1 p-2 md:p4 md:w-1/5 w-1/4 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  ">Delete</button>
+  <button className="md:m-4 m-1 p-2 md:p4 md:w-1/5 w-1/4 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  ">Save</button>
+
+  </div>
   <div className="flex justify-center ">
     <table className='border-collapse border-2 border-slate-500 w-full md:w-11/12 text-center'>
-      <thead className='bg-slate-100'>
-        <tr>
-          <th className='px-3 border text-xs md:text-base'>ID</th>
-          <th className='px-3 border text-xs md:text-base'>Name</th>
-          <th className='px-3 border text-xs md:text-base'>Age</th>
-          <th className='px-3 border text-xs md:text-base'>Gender</th>
-          <th className='px-3 border text-xs md:text-base'>Job</th>
+      <thead className='bg-slate-100 '>
+        <tr >
+          <th className='px-3 border text-xs md:text-xl'>ID</th>
+          <th className='px-3 border text-xs md:text-xl'>Name</th>
+          <th className='px-3 border text-xs md:text-xl'>Age</th>
+          <th className='px-3 border text-xs md:text-xl'>Gender</th>
+          <th className='px-3 border text-xs md:text-xl'>Job</th>
         </tr>
       </thead>
       <tbody>
         {records.map(record => (
-          <tr key={record.id} className='hoverField text-xs md:text-base' onClick={(interaction) => setRecords(records[interaction.key-1])}>
-            <td className='border-l border-t md:border-none'>{record.id}</td>
-            <td className='border-l border-t md:border-none'>{record.name}</td>
-            <td className='border-l border-t md:border-none'>{record.age}</td>
-            <td className='border-l border-t md:border-none'>{record.gender}</td>
-            <td className='border-l border-t md:border-none'>{record.job}</td>
+          <tr key={record.id} className={`hoverField text-xs md:text-lg ${currentRecord && record.id === currentRecord.id ? 'bg-slate-200' : ''}`} onClick={() => setCurrentRecord(record)}>
+            <td className='border-l py-1  md:border-none'>{record.id}</td>
+            <td className='border-l py-1 md:border-none'>{record.name}</td>
+            <td className='border-l py-1  md:border-none'>{record.age}</td>
+            <td className='border-l py-1  md:border-none'>{record.gender}</td>
+            <td className='border-l py-1  md:border-none'>{record.job}</td>
           </tr>
         ))}
       </tbody>
     </table>
   </div>
+  {
+  }
 
 </main>
 
