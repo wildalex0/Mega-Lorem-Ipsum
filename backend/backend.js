@@ -223,20 +223,22 @@ app.post('/api/records', (req, res) => {
     const newRecord = req.body;
     data.push(newRecord);
     res.status(201).json(newRecord);
+    console.log(`Data added ${newRecord}`);
 });
 
-app.put('/api/records:id', (req,res) => {
+app.put('/api/records/:id', (req,res) => {
     //Updates a new record using the id as a param
-    const id = req.params.id;
+    const id = parseInt(req.params.id);
+    console.log(`ID: ${id} - ${typeof(id)}`);
     const updatedRecord = req.body;
-    data.push(updatedRecord);
+    data = data.map(record => (record.id === id ? updatedRecord : record));
     res.json(updatedRecord);
-    console.log(updatedRecord);
 });
 
-app.delete('/api/records:id', (req,res) => {
+app.delete('/api/records/:id', (req,res) => {
     //Deletes an already existing record using the id as a param
-    const id = req.params.id;
+    const id = parseInt(req.params.id);
+    console.log(`${id} - ${typeof(id)}`);
     data = data.filter(record => record.id !== id);
     res.status(204).end();
 })

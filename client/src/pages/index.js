@@ -29,17 +29,18 @@ const handleEdit = record => {
 };
 
 const handleDelete = async id => {
+  console.log(id);
   if (window.confirm('Are you sure you want to delete this record?')){
-    await axios.delete(`http://localhost:5000/api/records:${id}`)
+    await axios.delete(`http://localhost:5000/api/records/${id}`)
     fetchRecords();
   }
 };
 
 const handleSave = async record => {
-  if(record.id){
-    await axios.put(`http://localhost:5000/api/records:${record.id}`, record);
+  if(parseInt(record.id) <= highestId){
+    await axios.put(`http://localhost:5000/api/records/${record.id}`, record);
   } else { 
-    await axios.post(`http://localhost:5000/api/records:${record.id}`, record);
+    await axios.post(`http://localhost:5000/api/records/`, record);
   };
   fetchRecords();
   setShowPopup(false);
