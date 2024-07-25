@@ -223,7 +223,7 @@ app.post('/api/records', (req, res) => {
     const newRecord = req.body;
     data.push(newRecord);
     res.status(201).json(newRecord);
-    console.log(`Data added ${newRecord}`);
+    console.log(newRecord);
 });
 
 app.put('/api/records/:id', (req,res) => {

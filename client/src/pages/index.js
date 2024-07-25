@@ -10,6 +10,12 @@ useEffect(() => {
   fetchRecords();
 }, []);
 
+useEffect(() => {
+  if(showPopup){
+    document.body.style.overflow = 'hidden';
+  } else document.body.style.overflow = 'scroll';
+}, [showPopup]);
+
 const fetchRecords = async () => {
   const response = await axios.get('http://localhost:5000/api/records');
   const dt = response.data
@@ -51,15 +57,15 @@ const handleSave = async record => {
   <p className="md:text-3xl text-lg font-semibold mx-5 mt-5">Mega Lorem Ipsum</p>
   <p className="md:text-xl text-base font-light mx-5 mb-6">Alessandro Gatt</p>
   
-  <div className='my-2 flex justify-center font-semibold'>
+  <div className='my-2 flex justify-center font-semibold sticky top-0 overlay'>
   <button className="md:m-4 m-1 md:p-2 p-1 md:p4 md:w-1/4 w-1/3 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  " onClick={() =>handleAdd()} >Add</button>
-  <button className="md:m-4 m-1 md:p-2 p-1 md:p4 md:w-1/4 w-1/3 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  " onClick={() => handleEdit(currentRecord)}>Edit</button>
-  <button className="md:m-4 m-1 md:p-2 p-1 md:p4 md:w-1/4 w-1/3 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  " onClick={() =>handleDelete(currentRecord.id)}>Delete</button>
+  <button className="md:m-4 m-1 md:p-2 p-1 md:p4 md:w-1/4 w-1/3 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  " onClick={() => currentRecord  ? handleEdit(currentRecord) : alert('nah') }>Edit</button>
+  <button className="md:m-4 m-1 md:p-2 p-1 md:p4 md:w-1/4 w-1/3 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  " onClick={() => currentRecord  ? handleDelete(currentRecord.id) : alert('nuhuh')}>Delete</button>
 
   </div>
   <div className="flex justify-center ">
     <table className='border-collapse border-2 border-slate-500 w-full md:w-11/12 text-center'>
-      <thead className='bg-slate-100 '>
+      <thead className='bg-slate-100'>
         <tr >
           <th className='px-3 border text-xs md:text-xl'>ID</th>
           <th className='px-3 border text-xs md:text-xl'>Name</th>

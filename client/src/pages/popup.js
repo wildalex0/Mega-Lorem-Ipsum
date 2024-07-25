@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Popup = ({ record, onClose, onSave, lastUsedId }) => {
-  const [formData, setFormData] = useState(record || { id: `${lastUsedId+1}`, name: '', age: '', gender: '', job: '' });
+  const [formData, setFormData] = useState(record || { id: lastUsedId+1 , name: '', age: '', gender: '', job: '' });
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -13,11 +13,24 @@ const Popup = ({ record, onClose, onSave, lastUsedId }) => {
     onSave(formData);
   };
 
+  useEffect(() => {
+    const closeOnEsc = (event) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', closeOnEsc);
+
+    return () => {
+      document.removeEventListener('keydown', closeOnEsc);
+    };
+  }, [onClose]);
   return (
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-content" onClick={e => e.stopPropagation()}>
         <form onSubmit={handleSubmit}>
-          <input name="id" value={formData.id} onChange={handleChange} disabled placeholder="Id" />
+          <input type='number' name="id" value={formData.id} onChange={handleChange} disabled placeholder="Id" />
           <input name="name" value={formData.name} onChange={handleChange} placeholder="Name" />
           <input name="age" value={formData.age} onChange={handleChange} placeholder="Age" />
           <input name="gender" value={formData.gender} onChange={handleChange} placeholder="Gender" />
