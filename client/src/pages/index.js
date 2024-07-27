@@ -1,20 +1,19 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import Popup from './popup';
+import { useRouter } from 'next/router';
+
 export default function Home() {
 const [records, setRecords] = useState([]);
 const [showPopup, setShowPopup] = useState(false);
 const [currentRecord, setCurrentRecord] = useState(null);
 const [highestId, setHighestId] = useState(-1);
+
+const router = useRouter();
+
 useEffect(() => {
   fetchRecords();
 }, []);
-
-useEffect(() => {
-  if(showPopup){
-    document.body.style.overflow = 'hidden';
-  } else document.body.style.overflow = 'scroll';
-}, [showPopup]);
 
 const fetchRecords = async () => {
   const response = await axios.get('http://localhost:5000/api/records');
@@ -23,6 +22,34 @@ const fetchRecords = async () => {
   setHighestId(Number((dt[dt.length-1]).id));
 
 };
+
+useEffect(() => {
+  const queryParms = router.query;
+  const currentRecordId = queryParms.currentRecord;
+  const showPopup = queryParms.showPopup;
+  const highestId = queryParms.highestId;
+
+  if (currentRecord) {
+    const record = records.find(record => record.id === parseInt(currentRecordId));
+    setCurrentRecord(record || null);
+  }
+  setHighestId(highestId ? parseInt(highestId) : -1);
+  setShowPopup(showPopup);
+}, [router.query, records])
+
+useEffect(() => {
+  const queryParms = {...router.query};
+  if(showPopup){
+    document.body.style.overflow = 'hidden';
+  } else document.body.style.overflow = 'scroll';
+  queryParms.showPopup = showPopup;
+  if(currentRecord){
+    queryParms.currentRecord = currentRecord.id;
+
+  }
+  queryParms.highestId = highestId;
+  router.replace({query: queryParms}, undefined, {shallow: true});
+}, [showPopup, currentRecord, highestId, router]);
 
 const handleAdd = () => {
   setCurrentRecord(null);
@@ -59,8 +86,8 @@ const handleSave = async record => {
   
   <div className='my-2 flex justify-center font-semibold sticky top-0 overlay'>
   <button className="md:m-4 m-1 md:p-2 p-1 md:p4 md:w-1/4 w-1/3 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  " onClick={() =>handleAdd()} >Add</button>
-  <button className="md:m-4 m-1 md:p-2 p-1 md:p4 md:w-1/4 w-1/3 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  " onClick={() => currentRecord  ? handleEdit(currentRecord) : alert('nah') }>Edit</button>
-  <button className="md:m-4 m-1 md:p-2 p-1 md:p4 md:w-1/4 w-1/3 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  " onClick={() => currentRecord  ? handleDelete(currentRecord.id) : alert('nuhuh')}>Delete</button>
+  <button className="md:m-4 m-1 md:p-2 p-1 md:p4 md:w-1/4 w-1/3 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  " onClick={() => currentRecord  ? handleEdit(currentRecord) : alert('Please Select a Record to Edit') }>Edit</button>
+  <button className="md:m-4 m-1 md:p-2 p-1 md:p4 md:w-1/4 w-1/3 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  " onClick={() => currentRecord  ? handleDelete(currentRecord.id) : alert('Please Select a Record to Delete')}>Delete</button>
 
   </div>
   <div className="flex justify-center ">
