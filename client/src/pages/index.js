@@ -7,6 +7,7 @@ const [showPopup, setShowPopup] = useState(false);
 const [currentRecord, setCurrentRecord] = useState(null);
 const [highestId, setHighestId] = useState(-1);
 const [historyRecords, setHistoryRecords] = useState([]);
+const [stateLoaded, setStateLoaded] = useState(false);
 useEffect(() => {
   fetchRecords();
   fetchHistory();
@@ -15,8 +16,17 @@ useEffect(() => {
 useEffect(() => {
   if(showPopup){
     document.body.style.overflow = 'hidden';
-  } else document.body.style.overflow = 'scroll';
+  } else {
+    document.body.style.overflow = 'scroll';
+    
+  }
 }, [showPopup]);
+
+useEffect(() => {
+  if(!stateLoaded){
+    populateInitialState();
+  }
+}, [historyRecords, stateLoaded, currentRecord, highestId])
 
 const fetchRecords = async () => {
   const response = await axios.get('http://localhost:5000/api/records');
@@ -31,6 +41,29 @@ const fetchHistory = async () => {
   setHistoryRecords(dt);
 }
 
+const populateInitialState = () => {
+    console.log(historyRecords);
+    if(historyRecords.length > 0){
+      if(historyRecords[0].details.popupOpen){
+        const latestRecordId = historyRecords[0].recordId;
+        if (latestRecordId > highestId){
+          setCurrentRecord(null);
+          setHighestId(latestRecordId);
+        }else{
+          let record = records.find(record => parseInt(record.id) === latestRecordId);
+          console.log(latestRecordId);
+          setCurrentRecord(record);
+        }
+        setShowPopup(true);
+      }
+      setStateLoaded(true);
+    }
+  
+  
+  
+
+
+}
 const logHistory = async (action, details, recordId = null) => {
   const historyEntry = {
     action,
@@ -58,7 +91,7 @@ const handleDelete = async id => {
   if (window.confirm('Are you sure you want to delete this record?')){
     await axios.delete(`http://localhost:5000/api/records/${id}`)
     fetchRecords();
-    logHistory('Deleted', { id });
+    logHistory('Deleted', {popupOpen: false, id });
 
   }
 };
@@ -73,16 +106,13 @@ const handleSave = async record => {
   };
   fetchRecords();
   setShowPopup(false);
-  logHistory('Popup Closed', { popupOpen: false });
-  fetchHistory();
-
+  logHistory('Popup Closed  - Action Complete', { popupOpen: false });
 };
 
   return (
     <main className="flex flex-col min-h-screen">
   <p className="md:text-3xl text-lg font-semibold mx-5 mt-5">Mega Lorem Ipsum</p>
   <p className="md:text-xl text-base font-light mx-5 mb-6">Alessandro Gatt</p>
-  <button className='bg-slate-200 w-1/4' onClick={() => console.log(historyRecords)}>test</button>  
 
   <div className='my-2 flex justify-center font-semibold sticky top-0 overlay'>
   <button className="md:m-4 m-1 md:p-2 p-1 md:p4 md:w-1/4 w-1/3 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  " onClick={() =>handleAdd()} >Add</button>
@@ -117,7 +147,7 @@ const handleSave = async record => {
   {showPopup && (
     <Popup
       record={currentRecord}
-      onClose={() => setShowPopup(false)}
+      onClose={() => [setShowPopup(false), logHistory('Popup Closed - Action Cancelled', {popupOpen: false})]}
       onSave={handleSave}
       lastUsedId={highestId}
     ></Popup>

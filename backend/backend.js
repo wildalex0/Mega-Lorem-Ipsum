@@ -16,7 +16,7 @@ app.get('/api/records', (req,res) => {
     res.json(data);
 });
 app.get('/api/history', (req,res) => {
-    res.json(history);
+    res.json(history.slice(0,5));
 });
 app.post('/api/records', (req, res) => {
     //Adds a new record
