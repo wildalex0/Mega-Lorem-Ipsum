@@ -9,7 +9,7 @@ const [highestId, setHighestId] = useState(-1);
 useEffect(() => {
   fetchRecords();
 }, []);
-
+9
 useEffect(() => {
   if(showPopup){
     document.body.style.overflow = 'hidden';
