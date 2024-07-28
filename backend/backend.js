@@ -8,14 +8,16 @@ app.use(bodyParser.json());
 
 //Memory Saved Data - Saved as JSON for easier accesibility.
 let data = require('./dataFiles/data.json');
-
+let history = require('./dataFiles/history.json');
 
 //API Routes
 app.get('/api/records', (req,res) => {
     //Fetching and returning all the data stored.
     res.json(data);
 });
-
+app.get('/api/history', (req,res) => {
+    res.json(history);
+});
 app.post('/api/records', (req, res) => {
     //Adds a new record
     const newRecord = req.body;
@@ -23,7 +25,12 @@ app.post('/api/records', (req, res) => {
     res.status(201).json(newRecord);
     console.log(newRecord);
 });
-
+app.post('/api/history', (req,res) => {
+    const entry = req.body;
+    //Latest change should be recorded as the first entry
+    history = [entry, ...history];
+    res.status(201).json(entry);
+})
 app.put('/api/records/:id', (req,res) => {
     //Updates a new record using the id as a param
     const id = parseInt(req.params.id);

@@ -35,7 +35,7 @@ const Popup = ({ record, onClose, onSave, lastUsedId }) => {
   }, [handleClose]);
   return (
     <div className={`fixed left-0 top-0 w-full h-screen flex justify-center bg-slate-50/55 items-center  ${isClosing ? 'fade-out' : 'fade-in'}`} onClick={handleClose}>
-      <div className="p-4 border-2 bg-slate-50 h-4/6" onClick={e => e.stopPropagation()}>
+      <div className="p-4 border-2 bg-slate-50 h-5/7" onClick={e => e.stopPropagation()}>
         <form onSubmit={handleSubmit} className='grid-rows-1 grid-flow-col gap-1'>
           <div className='p-2 py-3 my-2'>
             <label htmlFor='id'>ID</label>

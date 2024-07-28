@@ -6,10 +6,12 @@ const [records, setRecords] = useState([]);
 const [showPopup, setShowPopup] = useState(false);
 const [currentRecord, setCurrentRecord] = useState(null);
 const [highestId, setHighestId] = useState(-1);
+const [historyRecords, setHistoryRecords] = useState([]);
 useEffect(() => {
   fetchRecords();
+  fetchHistory();
 }, []);
-9
+
 useEffect(() => {
   if(showPopup){
     document.body.style.overflow = 'hidden';
@@ -23,15 +25,32 @@ const fetchRecords = async () => {
   setHighestId(Number((dt[dt.length-1]).id));
 
 };
+const fetchHistory = async () => {
+  const response = await axios.get('http://localhost:5000/api/history');
+  const dt = response.data
+  setHistoryRecords(dt);
+}
+
+const logHistory = async (action, details, recordId = null) => {
+  const historyEntry = {
+    action,
+    details,
+    recordId
+  };
+  axios.post('http://localhost:5000/api/history', historyEntry)
+}
 
 const handleAdd = () => {
   setCurrentRecord(null);
   setShowPopup(true);
+  logHistory('Popup Opened', {popupOpen: true}, highestId+1);
 };
 
 const handleEdit = record => {
   setCurrentRecord(record);
   setShowPopup(true);
+  logHistory('Popup Opened', {popupOpen: true}, record.id);
+
 };
 
 const handleDelete = async id => {
@@ -39,28 +58,36 @@ const handleDelete = async id => {
   if (window.confirm('Are you sure you want to delete this record?')){
     await axios.delete(`http://localhost:5000/api/records/${id}`)
     fetchRecords();
+    logHistory('Deleted', { id });
+
   }
 };
 
 const handleSave = async record => {
   if(parseInt(record.id) <= highestId){
     await axios.put(`http://localhost:5000/api/records/${record.id}`, record);
+    logHistory('Updated', record);
   } else { 
     await axios.post(`http://localhost:5000/api/records/`, record);
+    logHistory('Added', record);
   };
   fetchRecords();
   setShowPopup(false);
+  logHistory('Popup Closed', { popupOpen: false });
+  fetchHistory();
+
 };
 
   return (
     <main className="flex flex-col min-h-screen">
   <p className="md:text-3xl text-lg font-semibold mx-5 mt-5">Mega Lorem Ipsum</p>
   <p className="md:text-xl text-base font-light mx-5 mb-6">Alessandro Gatt</p>
-  
+  <button className='bg-slate-200 w-1/4' onClick={() => console.log(historyRecords)}>test</button>  
+
   <div className='my-2 flex justify-center font-semibold sticky top-0 overlay'>
   <button className="md:m-4 m-1 md:p-2 p-1 md:p4 md:w-1/4 w-1/3 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  " onClick={() =>handleAdd()} >Add</button>
-  <button className="md:m-4 m-1 md:p-2 p-1 md:p4 md:w-1/4 w-1/3 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  " onClick={() => currentRecord  ? handleEdit(currentRecord) : alert('nah') }>Edit</button>
-  <button className="md:m-4 m-1 md:p-2 p-1 md:p4 md:w-1/4 w-1/3 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  " onClick={() => currentRecord  ? handleDelete(currentRecord.id) : alert('nuhuh')}>Delete</button>
+  <button className="md:m-4 m-1 md:p-2 p-1 md:p4 md:w-1/4 w-1/3 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  " onClick={() => currentRecord  ? handleEdit(currentRecord) : alert('Please select a record to edit') }>Edit</button>
+  <button className="md:m-4 m-1 md:p-2 p-1 md:p4 md:w-1/4 w-1/3 border-2 rounded-lg md:text-lg text-base  border-slate-500 cursor-pointer   dark:bg-slate-200 bg-slate-500 dark:hover:bg-slate-300  " onClick={() => currentRecord  ? handleDelete(currentRecord.id) : alert('Please select a record to delete')}>Delete</button>
 
   </div>
   <div className="flex justify-center ">
