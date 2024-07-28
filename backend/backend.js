@@ -47,6 +47,6 @@ app.delete('/api/records/:id', (req,res) => {
     data = data.filter(record => record.id !== id);
     res.status(204).end();
 })
-
+//Hosts the server on the backend
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log('Server running on port 5000'));

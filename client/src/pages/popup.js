@@ -1,27 +1,36 @@
 import React, { useState, useEffect } from 'react';
 
 const Popup = ({ record, onClose, onSave, lastUsedId }) => {
+  //Sets format on how the form data will be
   const [formData, setFormData] = useState(record || { id: lastUsedId+1 , name: '', age: '', gender: '', job: '' });
+  //Triggers closing animation
   const [isClosing, setClosing ] = useState(false);
 
   const handleChange = e => {
+    //whenever a change is done, it is set into the formData state.
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  // Handle form submission
   const handleSubmit = e => {
+    // Prevent default form submission behavior (page reload)
     e.preventDefault();
+    // Call the onSave prop function with the current formData
     onSave(formData);
   };
 
   const handleClose = () => {
+    //Once handleClose is called, setClosing state is set to true to trigger the fade-out animation
     setClosing(true)
     setTimeout(() => {
+      //Calles the function once the timeout is finished (set as the same length as fade-out)
       onClose();
     }, 300);
   }
   useEffect(() => {
     const closeOnEsc = (event) => {
+      //Checks whenever an Escape key is clicked.
       if (event.key === 'Escape') {
         handleClose();
       }
