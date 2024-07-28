@@ -56,16 +56,21 @@ Deletes an already existing record through a confirmation window. There is valid
 # Screenshots
 
 Home-screen
+
 ![image](https://github.com/user-attachments/assets/aaff548b-d3b9-4193-ae27-7cc788e591be)
 
 Add Popup
+
 ![image](https://github.com/user-attachments/assets/3dfb6a3f-e3cc-4e6d-84b7-3c8c39c148ca)
 
 Edit Popup
+
 ![image](https://github.com/user-attachments/assets/6ec67adb-c75c-4d48-9fec-b55acd6ac242)
 
 Delete Confirmation
+
 ![image](https://github.com/user-attachments/assets/38384aa7-beae-40a4-9a3d-785d9d5c5cdb)
 
 Mobile View
+
 ![image](https://github.com/user-attachments/assets/4fc641fe-0875-4deb-97cb-9f46ab7ac1c9)
